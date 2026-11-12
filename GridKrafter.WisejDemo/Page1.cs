@@ -39,6 +39,7 @@ namespace GridKrafter.WisejDemo
 		private void Page1_Load(object sender, EventArgs e)
 		{
 			BoardEvents.Changed += this.BoardEvents_Changed;
+			Application.ThemeChanged += this.Application_ThemeChanged;
 			if (BoardEvents.Status != null)
 				this.labelStatus.Text = BoardEvents.Status;
 
@@ -49,6 +50,15 @@ namespace GridKrafter.WisejDemo
 		private void Unsubscribe(object sender, EventArgs e)
 		{
 			BoardEvents.Changed -= this.BoardEvents_Changed;
+			Application.ThemeChanged -= this.Application_ThemeChanged;
+		}
+
+		// Some controls (KPI panels, meters) take their colours from the theme when they are created,
+		// so the page shown is created again in the new theme.
+		private void Application_ThemeChanged(object sender, EventArgs e)
+		{
+			if (this.navigationBar.SelectedItem != null)
+				ShowPanel((string)this.navigationBar.SelectedItem.Tag);
 		}
 
 		private void ShowPanel(string panelName)
