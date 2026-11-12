@@ -205,6 +205,19 @@ qx.Class.define("gridkrafter.wisejdemo.GridBoard", {
 	statics: {
 
 		/**
+		 * The theme colours a palette colour falls back to, in order, in a theme that has no colour of
+		 * that name (the shipped Fluent, Material and Bootstrap themes): the theme's own semantic colours.
+		 */
+		SEMANTIC: {
+			green: ["success"],
+			amber: ["warning"],
+			red: ["danger"],
+			sky: ["info"],
+			blue: ["primary", "highlight"],
+			violet: ["highlight"]
+		},
+
+		/**
 		 * The built-in icons, as the inside of a 24 x 24 SVG drawn with the current text colour.
 		 */
 		ICONS: {
@@ -296,6 +309,11 @@ qx.Class.define("gridkrafter.wisejdemo.GridBoard", {
 			color = color || "blue";
 			if (manager.isDynamic(color))
 				return manager.resolve(color);
+			var semantic = gridkrafter.wisejdemo.GridBoard.SEMANTIC[color];
+			for (var i = 0; semantic && i < semantic.length; i++) {
+				if (manager.isDynamic(semantic[i]))
+					return manager.resolve(semantic[i]);
+			}
 			if (manager.isDynamic("grid-board-" + color + "-accent"))
 				return manager.resolve("grid-board-" + color + "-accent");
 			return color;
@@ -1415,7 +1433,7 @@ qx.Class.define("gridkrafter.wisejdemo.GridWidget", {
 			this.__east.setStyle("display", edit ? "block" : "none");
 			this.__south.setStyle("display", edit && !collapsed ? "block" : "none");
 			this.__hover.setStyle("display", plain && edit ? "flex" : "none");
-			if (!edit || plain)
+			if (!edit || plain || collapsed)
 				this.__setEditing(false);
 
 			this._applyFooter();
@@ -1562,14 +1580,15 @@ qx.Class.define("gridkrafter.wisejdemo.GridWidget", {
 		 */
 		__onTitleInput: function () {
 
-			if (this.__titleTimer)
-				this.__titleTimer.stop();
-
-			this.__titleTimer = qx.event.Timer.once(function () {
-				this.__titleTimer = null;
-				if (!this.isDisposed())
-					this.fireDataEvent("widgetAction", { action: "rename", title: this.getChildControl("title-field").getValue() || "" });
-			}, this, 350);
+			if (!this.__titleTimer) {
+				this.__titleTimer = new qx.event.Timer(350);
+				this.__titleTimer.addListener("interval", function () {
+					this.__titleTimer.stop();
+					if (!this.isDisposed())
+						this.fireDataEvent("widgetAction", { action: "rename", title: this.getChildControl("title-field").getValue() || "" });
+				}, this);
+			}
+			this.__titleTimer.restart();
 		},
 
 		/**

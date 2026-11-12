@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using GridKrafter.Models;
 using GridKrafter.WisejDemo.Controls;
@@ -41,8 +42,14 @@ namespace GridKrafter.WisejDemo.Panels
 
 			this.board.SuspendLayout();
 			this.board.Controls.Clear(true);
+			// catalog widgets saved by an earlier build of this demo, which took the pencil away, get it back
+			var own = new HashSet<string>(DemoBoard.Create().Items.Select(i => i.Id));
 			foreach (var item in model.Items.Where(i => !i.Hidden))
+			{
+				if (!own.Contains(item.Id) && item.Chrome != WidgetChrome.Plain && item.Buttons.HasValue)
+					item.Buttons |= WidgetButtons.Edit;
 				this.board.Controls.Add(CreateWidget(item));
+			}
 
 			this.board.LoadBoard(model);
 			this.board.ResumeLayout(true);
@@ -84,15 +91,18 @@ namespace GridKrafter.WisejDemo.Panels
 			}
 			else
 			{
-				var kind = this.board.Catalog.FirstOrDefault(k => k.Kind == e.Kind);
-				if (kind == null)
-					return;
-
+				// a kind the catalog no longer offers still comes back, as a card of that kind
+				var kind = this.board.Catalog.FirstOrDefault(k => k.Kind == e.Kind)
+					?? new GridWidgetKind { Kind = e.Kind, Text = e.Item.Text, Icon = e.Item.Icon, Color = e.Item.Color };
 				widget = CreateCatalogWidget(kind);
 				widget.ItemId = id;
-				widget.Title = e.Item.Text;
-				widget.Color = string.IsNullOrEmpty(e.Item.Color) ? kind.Color : e.Item.Color;
 			}
+
+			// as it was when deleted: its title and colour
+			if (!string.IsNullOrEmpty(e.Item.Text))
+				widget.Title = e.Item.Text;
+			if (!string.IsNullOrEmpty(e.Item.Color))
+				widget.Color = e.Item.Color;
 
 			// it comes back at a free place of the section on show, as in the original
 			widget.GridX = -1;

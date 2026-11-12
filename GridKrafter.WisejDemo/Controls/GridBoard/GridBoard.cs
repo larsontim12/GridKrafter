@@ -63,6 +63,10 @@ namespace GridKrafter.WisejDemo.Controls
 		// what the catalog shows of each removed widget, to bring it back: its title, icon and colour.
 		private readonly Dictionary<string, DashboardItem> removedItems = new Dictionary<string, DashboardItem>(StringComparer.Ordinal);
 
+		// when each removed widget was removed, so the catalog lists them in that order.
+		private readonly Dictionary<string, long> removedOrder = new Dictionary<string, long>(StringComparer.Ordinal);
+		private long removedCount;
+
 		// true while the board moves its own widgets: their bounds changes are not snapped back.
 		private bool inLayout;
 
@@ -420,6 +424,7 @@ namespace GridKrafter.WisejDemo.Controls
 					{
 						// deleted earlier: the catalog offers it back, whether or not the page made a widget for it
 						this.removedIds.Add(item.Id);
+						this.removedOrder[item.Id] = ++this.removedCount;
 						this.removedItems[item.Id] = new DashboardItem
 						{
 							Id = item.Id,
@@ -527,6 +532,7 @@ namespace GridKrafter.WisejDemo.Controls
 				this.fullscreen = null;
 
 			this.removedIds.Add(widget.EffectiveId);
+			this.removedOrder[widget.EffectiveId] = ++this.removedCount;
 			this.removedItems[widget.EffectiveId] = new DashboardItem { Id = widget.EffectiveId, Kind = widget.Kind, Title = widget.Title, Icon = widget.Icon, Color = widget.Color };
 			this.Controls.Remove(widget);
 			PerformLayout();
@@ -1279,6 +1285,7 @@ namespace GridKrafter.WisejDemo.Controls
 			// the collections: plain values only
 			config.sections = this.Sections.Select(i => new { name = i.Name, id = i.Id, title = i.Title, icon = i.Icon, count = SectionCount(i.Id) }).ToArray();
 			config.removed = this.removedIds
+				.OrderBy(id => { long n; return this.removedOrder.TryGetValue(id, out n) ? n : 0; })
 				.Select(id => { DashboardItem i; this.removedItems.TryGetValue(id, out i); return new { id, title = i?.Title ?? id, icon = i?.Icon ?? "", color = i?.Color ?? "" }; })
 				.ToArray();
 			config.catalog = this.Catalog.Select(i => new { name = i.Name, text = i.DisplayName, kind = i.Kind, description = i.Description, icon = i.Icon, color = i.Color, w = i.W, h = i.H, minW = i.MinW, minH = i.MinH, maxW = i.MaxW, maxH = i.MaxH, autoHeight = i.AutoHeight, refresh = i.Refresh }).ToArray();
