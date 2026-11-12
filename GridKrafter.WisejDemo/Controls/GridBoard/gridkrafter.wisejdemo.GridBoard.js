@@ -754,14 +754,18 @@ qx.Class.define("gridkrafter.wisejdemo.GridBoard", {
 				return;
 			}
 
+			// every free cell is a softly filled rounded block, as the original's edit-mode grid
 			var manager = qx.theme.manager.Color.getInstance();
-			var dot = manager.resolve(this.getThemeGridColor());
-			var gap = this.getGap();
-			var stepX = cell + gap, stepY = this.getRowHeight() + gap;
+			var fill = manager.resolve(this.getThemeGridColor());
+			var gap = this.getGap(), rowH = this.getRowHeight();
+			var stepX = cell + gap, stepY = rowH + gap;
+			var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + stepX + '" height="' + stepY + '">' +
+				'<rect x="0" y="0" width="' + cell + '" height="' + rowH + '" rx="4" ry="4" fill="' + fill + '"/></svg>';
 			el.setStyles({
-				backgroundImage: "radial-gradient(circle, " + dot + " 1.3px, transparent 1.6px)",
+				backgroundImage: 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")',
 				backgroundSize: stepX + "px " + stepY + "px",
-				backgroundPosition: Math.round(cell / 2 - stepX / 2) + "px " + Math.round(this.getRowHeight() / 2 - stepY / 2) + "px"
+				backgroundPosition: "0px 0px",
+				backgroundRepeat: "repeat"
 			});
 		},
 
