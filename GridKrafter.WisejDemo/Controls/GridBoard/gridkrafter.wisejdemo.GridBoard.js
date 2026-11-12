@@ -402,7 +402,8 @@ qx.Class.define("gridkrafter.wisejdemo.GridBoard", {
 
 				case "toolbar":
 					// three rows: Edit (and Add widget), the tabs, the Collapse all / Expand all links
-					control = new qx.ui.container.Composite(new qx.ui.layout.VBox(8));
+					// minWidth 0 on the toolbar and its rows: they never hold the page wider than the screen
+					control = new qx.ui.container.Composite(new qx.ui.layout.VBox(8)).set({ minWidth: 0 });
 					control.setHeight(this.getToolbarHeight());
 					control.add(this.getChildControl("actions"));
 					control.add(this.getChildControl("tabs"));
@@ -412,7 +413,7 @@ qx.Class.define("gridkrafter.wisejdemo.GridBoard", {
 
 				case "actions":
 					// view mode: Edit; edit mode: Done, Add widget, Add section ... Reset layout (as the original)
-					control = new qx.ui.container.Composite(new qx.ui.layout.HBox(8).set({ alignY: "middle" }));
+					control = new qx.ui.container.Composite(new qx.ui.layout.HBox(8).set({ alignY: "middle" })).set({ minWidth: 0 });
 					control.add(this.getChildControl("edit-button"));
 					control.add(this.getChildControl("add-button"));
 					control.add(this.getChildControl("section-button"));
@@ -453,14 +454,16 @@ qx.Class.define("gridkrafter.wisejdemo.GridBoard", {
 					break;
 
 				case "tabs":
-					control = new qx.ui.container.Composite(new qx.ui.layout.HBox(2).set({ alignY: "bottom" }));
+					// tabs that don't fit scroll sideways, with arrows, instead of being cut off
+					control = new qx.ui.container.SlideBar("horizontal").set({ minWidth: 0, appearance: "grid-board/tabs" });
+					control.setLayout(new qx.ui.layout.HBox(2).set({ alignY: "bottom" }));
 					control.getContentElement().setAttribute("role", "tablist");
 					break;
 
 				case "links":
 					// the section's title (a field in edit mode) on the left; Collapse all, Expand all and,
 					// in edit mode, the section's actions on the right
-					control = new qx.ui.container.Composite(new qx.ui.layout.HBox(14).set({ alignY: "middle" }));
+					control = new qx.ui.container.Composite(new qx.ui.layout.HBox(14).set({ alignY: "middle" })).set({ minWidth: 0 });
 					control.add(this.getChildControl("section-title"), { flex: 1 });
 					this.getChildControl("section-title").setMaxWidth(280);
 					control.add(new qx.ui.core.Spacer(), { flex: 1 });

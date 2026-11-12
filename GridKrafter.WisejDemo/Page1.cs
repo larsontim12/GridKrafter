@@ -60,6 +60,9 @@ namespace GridKrafter.WisejDemo
 			const int SIDE = 24, GAP = 12;
 			int width = this.panelTop.ClientSize.Width;
 			int side = width < 600 ? 12 : SIDE;
+
+			// on a phone the theme box gets narrower so Reset still fits beside it
+			this.comboBoxTheme.Width = width < 480 ? Math.Max(150, width - 2 * side - GAP - this.buttonReset.Width) : 206;
 			int buttons = this.comboBoxTheme.Width + GAP + this.buttonReset.Width;
 			bool wide = width >= 760;
 			int textWidth = Math.Max(120, width - 2 * side - (wide ? buttons + SIDE : 0));
@@ -70,7 +73,6 @@ namespace GridKrafter.WisejDemo
 			this.labelTitle.Location = new System.Drawing.Point(side, 12);
 			this.labelIntro.AutoSize = true;
 			this.labelIntro.MaximumSize = new System.Drawing.Size(textWidth, 0);
-			this.labelIntro.MinimumSize = new System.Drawing.Size(textWidth, 0);
 			this.labelIntro.Location = new System.Drawing.Point(side, this.labelTitle.Bottom + 4);
 			this.labelStatus.Location = new System.Drawing.Point(side, this.labelIntro.Bottom + 4);
 			this.labelStatus.Width = textWidth;
