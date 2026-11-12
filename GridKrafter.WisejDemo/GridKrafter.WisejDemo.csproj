@@ -115,4 +115,17 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- StatTile: its client class and theme mixin, embedded under the names Wisej.NET reads them by -->
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Controls\StatTile\StatTile.mixin.theme">
+      <DependentUpon>StatTile.cs</DependentUpon>
+      <LogicalName>$(RootNamespace).Themes.StatTile.mixin.theme</LogicalName>
+    </EmbeddedResource>
+    <None Remove="$(MSBuildThisFileDirectory)Controls\StatTile\gridkrafter.wisejdemo.StatTile.js" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Controls\StatTile\gridkrafter.wisejdemo.StatTile.js">
+      <DependentUpon>StatTile.cs</DependentUpon>
+      <LogicalName>$(RootNamespace).Platform.gridkrafter.wisejdemo.StatTile.js</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>
