@@ -58,7 +58,8 @@ namespace GridKrafter.WisejDemo.Panels
 		// The board is a centred column at most 1080 pixels wide, as on the MVC page.
 		private void CenterBoard()
 		{
-			const int MAX_WIDTH = 1080, SIDE = 24;
+			const int MAX_WIDTH = 1080;
+			int SIDE = this.Width < 600 ? 4 : 24;
 			int extra = Math.Max(0, (this.Width - 2 * SIDE - MAX_WIDTH) / 2);
 			this.Padding = new Padding(SIDE + extra, 12, SIDE + extra, 20);
 		}

@@ -433,7 +433,7 @@ qx.Class.define("gridkrafter.wisejdemo.GridBoard", {
 					break;
 
 				case "section-title":
-					control = new qx.ui.form.TextField().set({ width: 280, placeholder: "Section title" });
+					control = new qx.ui.form.TextField().set({ width: 280, minWidth: 90, allowShrinkX: true, placeholder: "Section title" });
 					control.getContentElement().setAttribute("aria-label", "Section title");
 					control.addListener("input", this.__onSectionTitleInput, this);
 					break;
@@ -461,7 +461,8 @@ qx.Class.define("gridkrafter.wisejdemo.GridBoard", {
 					// the section's title (a field in edit mode) on the left; Collapse all, Expand all and,
 					// in edit mode, the section's actions on the right
 					control = new qx.ui.container.Composite(new qx.ui.layout.HBox(14).set({ alignY: "middle" }));
-					control.add(this.getChildControl("section-title"));
+					control.add(this.getChildControl("section-title"), { flex: 1 });
+					this.getChildControl("section-title").setMaxWidth(280);
 					control.add(new qx.ui.core.Spacer(), { flex: 1 });
 					control.add(this.getChildControl("collapse-link"));
 					control.add(this.getChildControl("expand-link"));
