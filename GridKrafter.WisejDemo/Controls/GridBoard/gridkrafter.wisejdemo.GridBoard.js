@@ -236,7 +236,12 @@ qx.Class.define("gridkrafter.wisejdemo.GridBoard", {
 			reset: '<path d="M4 11a8 8 0 1 1 2 6M4 5v6h6"/>',
 			up: '<path d="M12 19V5M6 11l6-6 6 6"/>',
 			down: '<path d="M12 5v14M6 13l6 6 6-6"/>',
-			trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'
+			trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+			alert: '<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/>',
+			message: '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>',
+			zap: '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+			cpu: '<rect x="6" y="6" width="12" height="12" rx="1.5"/><rect x="9.5" y="9.5" width="5" height="5"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',
+			box: '<path d="M21 8l-9-5-9 5 9 5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/>'
 		},
 
 		/**
