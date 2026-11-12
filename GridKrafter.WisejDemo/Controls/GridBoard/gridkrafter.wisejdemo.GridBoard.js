@@ -24,6 +24,7 @@ qx.Class.define("gridkrafter.wisejdemo.GridBoard", {
 		this.getChildControl("pane").addListener("changeScrollbarYVisibility", this.__onAreaResize, this);
 
 		qx.theme.manager.Color.getInstance().addListener("changeTheme", this._applyGrid, this);
+		qx.theme.manager.Color.getInstance().addListener("changeTheme", this._applySections, this);
 
 		this._applySections();
 		this._applyEditMode(this.getEditMode());
@@ -363,6 +364,11 @@ qx.Class.define("gridkrafter.wisejdemo.GridBoard", {
 		__renameTimer: null,
 
 		/**
+		 * The section a pending rename is for.
+		 */
+		__renameId: null,
+
+		/**
 		 * The section's action buttons, shown in edit mode.
 		 */
 		__sectionActions: null,
@@ -461,6 +467,7 @@ qx.Class.define("gridkrafter.wisejdemo.GridBoard", {
 					control.setLabel(gridkrafter.wisejdemo.GridBoard.iconTextHtml("edit", "Edit", 14));
 					control.getContentElement().setAttribute("aria-pressed", "false");
 					control.addListener("execute", function () {
+						this.__flushRename();
 						this.fireEvent("editToggle");
 					}, this);
 					break;
@@ -548,14 +555,27 @@ qx.Class.define("gridkrafter.wisejdemo.GridBoard", {
 		 */
 		__onSectionTitleInput: function () {
 
+			// the section the user is typing for, whatever is selected when the timer fires
+			this.__renameId = this.getSelectedSection();
+			if (!this.__renameTimer) {
+				this.__renameTimer = new qx.event.Timer(350);
+				this.__renameTimer.addListener("interval", this.__flushRename, this);
+			}
+			this.__renameTimer.restart();
+		},
+
+		/**
+		 * Sends a pending section rename now: when its timer fires, and before a tab change or Done.
+		 */
+		__flushRename: function () {
+
 			if (this.__renameTimer)
 				this.__renameTimer.stop();
 
-			this.__renameTimer = qx.event.Timer.once(function () {
-				this.__renameTimer = null;
-				if (!this.isDisposed())
-					this.fireDataEvent("sectionRename", { id: this.getSelectedSection(), title: this.getChildControl("section-title").getValue() || "" });
-			}, this, 350);
+			var id = this.__renameId;
+			this.__renameId = null;
+			if (id && !this.isDisposed())
+				this.fireDataEvent("sectionRename", { id: id, title: this.getChildControl("section-title").getValue() || "" });
 		},
 
 		/**
@@ -867,6 +887,7 @@ qx.Class.define("gridkrafter.wisejdemo.GridBoard", {
 		__onTab: function (e) {
 
 			var id = e.getTarget().getUserData("id");
+			this.__flushRename();
 			if (id && id !== this.getSelectedSection())
 				this.fireDataEvent("sectionSelect", id);
 		},
@@ -947,6 +968,7 @@ qx.Class.define("gridkrafter.wisejdemo.GridBoard", {
 		}
 
 		qx.theme.manager.Color.getInstance().removeListener("changeTheme", this._applyGrid, this);
+		qx.theme.manager.Color.getInstance().removeListener("changeTheme", this._applySections, this);
 		this._disposeObjects("__areaTimer", "__renameTimer");
 		this.__selected = this.__drag = this.__sectionActions = null;
 	}
@@ -1024,6 +1046,7 @@ qx.Class.define("gridkrafter.wisejdemo.GridWidget", {
 		this.addListener("disappear", this._updateTimer, this);
 
 		qx.theme.manager.Color.getInstance().addListener("changeTheme", this._applyLook, this);
+		qx.theme.manager.Color.getInstance().addListener("changeTheme", this._applyChrome, this);
 
 		this._applyLook();
 		this._applyChrome();
@@ -1637,6 +1660,7 @@ qx.Class.define("gridkrafter.wisejdemo.GridWidget", {
 	destruct: function () {
 
 		qx.theme.manager.Color.getInstance().removeListener("changeTheme", this._applyLook, this);
+		qx.theme.manager.Color.getInstance().removeListener("changeTheme", this._applyChrome, this);
 		this._disposeObjects("__timer", "__titleTimer", "__stripe", "__hover", "__grip", "__east", "__south");
 	}
 });

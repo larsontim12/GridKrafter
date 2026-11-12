@@ -416,16 +416,28 @@ namespace GridKrafter.WisejDemo.Controls
 				foreach (var item in board.Items)
 				{
 					var widget = FindWidget(item.Id);
-					if (widget == null)
-						continue;
-
 					if (item.Hidden)
 					{
+						// deleted earlier: the catalog offers it back, whether or not the page made a widget for it
 						this.removedIds.Add(item.Id);
-						this.removedItems[item.Id] = new DashboardItem { Id = item.Id, Kind = widget.Kind, Title = widget.Title, Icon = widget.Icon, Color = widget.Color };
-						this.Controls.Remove(widget);
+						this.removedItems[item.Id] = new DashboardItem
+						{
+							Id = item.Id,
+							Kind = widget?.Kind ?? item.Kind,
+							Title = widget?.Title ?? item.Title,
+							Icon = widget?.Icon ?? item.Icon,
+							Color = widget?.Color ?? item.Color,
+						};
+						if (widget != null)
+						{
+							this.Controls.Remove(widget);
+							widget.Dispose();
+						}
 						continue;
 					}
+
+					if (widget == null)
+						continue;
 
 					widget.LoadItem(item, largest.Id);
 				}
