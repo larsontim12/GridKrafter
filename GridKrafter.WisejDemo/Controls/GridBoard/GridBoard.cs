@@ -396,6 +396,9 @@ namespace GridKrafter.WisejDemo.Controls
 			SuspendLayout();
 			try
 			{
+				// a whole board: what was removed before is forgotten, then its hidden items are remembered again
+				this.removedIds.Clear();
+				this.removedItems.Clear();
 				this.Sections.Clear();
 				foreach (var section in board.Sections)
 				{
